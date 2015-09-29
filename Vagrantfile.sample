@@ -1,0 +1,46 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+$script = <<SCRIPT
+  apt-get update
+  apt-get install -y git curl bison
+SCRIPT
+
+$script2 = <<SCRIPT
+  bash < <(curl -s -S -L https://raw.githubusercontent.com/moovweb/gvm/master/binscripts/gvm-installer)
+  source /home/vagrant/.gvm/scripts/gvm
+  gvm install go1.4
+  gvm use go1.4
+  go get github.com/shirou/gopsutil
+SCRIPT
+
+# Vagrantfile API/syntax version. Don't touch unless you know what you're doing!
+VAGRANTFILE_API_VERSION = "2"
+
+Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
+  
+  config.vm.hostname = "vagrant"
+
+  # More at https://atlas.hashicorp.com/boxes/search
+  config.vm.box = "chef/ubuntu-14.04"
+
+  # Create a forwarded port mapping which allows access to a specific port
+  # within the machine from a port on the host machine. In the example below,
+  # accessing "localhost:8080" will access port 80 on the guest machine.
+  # config.vm.network "forwarded_port", guest: 80, host: 8080
+
+  # Create a private network, which allows host-only access to the machine
+  # using a specific IP.
+  config.vm.network "private_network", ip: "192.168.33.10"
+
+  # Create a public network, which generally matched to bridged network.
+  # Bridged networks make the machine appear as another physical device on
+  # your network.
+  # config.vm.network "public_network"
+
+  config.vm.synced_folder "/path/to/local/stats-ag", "/home/vagrant/stats-ag", create: true
+
+  config.vm.provision "shell", inline: $script
+  config.vm.provision "shell", inline: $script2, privileged: false
+
+end

@@ -1,0 +1,5 @@
+_metrics/*
+_scripts/*
+.vagrant/*
+bin/*
+Vagrantfile
