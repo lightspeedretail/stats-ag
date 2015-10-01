@@ -15,7 +15,7 @@ var debug bool
 
 func main() {
 
-	if os.Args[1] == "-v" {
+	if len(os.Args) >= 2 && os.Args[1] == "-v" {
 		fmt.Printf("Stats-ag Version %s\n", VERSION)
 		os.Exit(0)
 	}
