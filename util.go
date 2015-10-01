@@ -29,7 +29,7 @@ func getDateStamp(format string) string {
 
 		return t.Format(time.RFC3339)
 
-	} else if format == "SYSLOG" { // 28/Sep/2015:03:26:25.532
+	} else if format == "SYSLOG" { // Oct  1 13:22:25
 
 		return fmt.Sprintf("%s %d %02d:%02d:%02d",
 			t.Month().String()[0:3], t.Day(),
