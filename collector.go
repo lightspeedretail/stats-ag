@@ -15,6 +15,11 @@ var debug bool
 
 func main() {
 
+	if os.Args[1] == "-v" {
+		fmt.Printf("Stats-ag Version %s\n", VERSION)
+		os.Exit(0)
+	}
+
 	flag.IntVar(&enable_scripts, "e", 0, "Enable custom scripts execution")
 	flag.StringVar(&metrics_dir, "m", "/var/log/stats_collector", "Location where metrics log files are written")
 	flag.StringVar(&scripts_dir, "s", "/opt/stats_collector", "Location where custom metrics scripts are located")
