@@ -16,8 +16,12 @@ type CustomMetric struct {
 
 func NewCustomMetric(script_path string) (*CustomMetric, error) {
 
+	if debug {
+		fmt.Println(getDateStamp(time_prefix), "[DEBUG] custom metric file:", script_path)
+	}
+
 	if _, err := os.Stat(script_path); os.IsNotExist(err) {
-		return &CustomMetric{}, errors.New(fmt.Sprintf("Script %s does not exists!"))
+		return &CustomMetric{}, errors.New(fmt.Sprintf("Script %s does not exists!", script_path))
 	}
 
 	_, file := filepath.Split(script_path)
