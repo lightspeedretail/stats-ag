@@ -9,41 +9,31 @@ import (
 )
 
 var metrics_dir, scripts_dir, time_prefix string
-var enable_scripts int
+var enable_scripts, debug int
 var core_stats map[string]interface{}
-var debug bool
 
 func main() {
 
+	flag.IntVar(&enable_scripts, "e", 0, "Enable custom scripts execution")
+	flag.StringVar(&metrics_dir, "m", "/var/log/stats-ag", "Location where metrics log files are written")
+	flag.StringVar(&scripts_dir, "s", "/opt/stats-ag/scripts", "Location where custom metrics scripts are located")
+	flag.StringVar(&time_prefix, "p", "SYSLOG", "Date prefix format for metric entries (RFC822Z, ISO8601, RFC3339, SYSLOG)")
+	flag.IntVar(&debug, "d", 0, "Enable verbose debug mode")
+
 	if len(os.Args) >= 2 && os.Args[1] == "-v" {
-		fmt.Printf("Stats-ag Version %s\n", VERSION)
+		fmt.Printf("Stats-ag Version %s (Build date: %s)\nCommit SHA: %s\n", VERSION, BUILD_DATE, COMMIT_SHA)
 		os.Exit(0)
 	}
 
-	flag.IntVar(&enable_scripts, "e", 0, "Enable custom scripts execution")
-	flag.StringVar(&metrics_dir, "m", "/var/log/stats_collector", "Location where metrics log files are written")
-	flag.StringVar(&scripts_dir, "s", "/opt/stats_collector", "Location where custom metrics scripts are located")
-	flag.StringVar(&time_prefix, "p", "SYSLOG", "Date prefix format for metric entries (RFC822Z, ISO8601, RFC3339, SYSLOG)")
-	flag.BoolVar(&debug, "d", false, "Enable verbose debug mode")
 	flag.Parse()
 
-	if flag.NArg() == 0 {
-		usage := `
-Usage: stats-ag [OPTIONS]
-Options:
-	-e [ENABLE_CUSTOM_SCRIPTS] (default = 0)
-	-m [METRICS_DIR] (default = /var/log/stats_collector)
-	-s [CUSTOM_SCRIPTS_DIR] (default = /opt/stats_collector)
-	-p [TIME_PREFIX_FORMAT] (default = SYSLOG)
-	-d [DEBUG] (default = false)
-	`
-		fmt.Printf("%s\n", usage)
-		os.Exit(0)
+	if flag.NFlag() == 0 {
+		flag.PrintDefaults()
 	}
 
-	if debug {
+	if debug == 1 {
 		fmt.Printf(
-			"\nstats-ag config values:\n---------------------------\nenable_scripts = %d\nmetrics_dir = %s\nscripts_dir = %s\ntime_prefix = %s\ndebug = %t\n\n",
+			"\nstats-ag config values:\n---------------------------\nenable_scripts = %d\nmetrics_dir = %s\nscripts_dir = %s\ntime_prefix = %s\ndebug = %d\n\n",
 			enable_scripts,
 			metrics_dir,
 			scripts_dir,
@@ -69,7 +59,7 @@ Options:
 	for k, _ := range core_stats {
 		go func(wg *sync.WaitGroup, core_stats map[string]interface{}, method string) {
 			mw := NewMetricsWriter(method, time_prefix)
-			if debug {
+			if debug == 1 {
 				fmt.Printf("%s [DEBUG] fetching core stat: %s\n", getDateStamp(time_prefix), method)
 			}
 			res, _ := Call(core_stats, method)
@@ -85,7 +75,7 @@ Options:
 
 			go func(wg *sync.WaitGroup, script_name string) {
 
-				if debug {
+				if debug == 1 {
 					fmt.Printf("%s [DEBUG] calling custom stat: %s\n", getDateStamp(time_prefix), script_name)
 				}
 				cm, err := NewCustomMetric(script_name)

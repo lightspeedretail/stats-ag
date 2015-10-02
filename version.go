@@ -1,5 +1,5 @@
 package main
 
-const (
-	VERSION = "0.1.1"
-)
+var VERSION string = "0.0.0"
+var BUILD_DATE string = ""
+var COMMIT_SHA string = ""
