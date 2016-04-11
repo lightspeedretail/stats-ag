@@ -2,6 +2,10 @@ stats_ag CHANGELOG
 ===========================
 
 
+0.1.2
+-----
+- Updated `gopsutil` related fuction calls to reflect the 2.0.0 [release](https://github.com/shirou/gopsutil/releases/tag/v2.0.0)
+
 0.1.1
 -----
 - Fixed syslog date format and example
