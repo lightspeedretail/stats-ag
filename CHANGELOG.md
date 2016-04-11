@@ -5,6 +5,8 @@ stats_ag CHANGELOG
 0.1.2
 -----
 - Updated `gopsutil` related fuction calls to reflect the 2.0.0 [release](https://github.com/shirou/gopsutil/releases/tag/v2.0.0)
+- [bugfix] If the scripts dir was specified, but scripts were not enabled, a deadlock situation would occur as the application was expecting more stats to execute then actually existed. 
+- Removed the `-e` flag to enable custome scripts as the `-s` flag with a default value of empty, makes it unecessary.  
 
 0.1.1
 -----
