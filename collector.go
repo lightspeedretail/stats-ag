@@ -14,7 +14,6 @@ var core_stats map[string]interface{}
 
 func main() {
 
-	flag.IntVar(&enable_scripts, "e", 0, "Enable custom scripts execution")
 	flag.StringVar(&metrics_dir, "m", "/var/log/stats-ag", "Location where metrics log files are written")
 	flag.StringVar(&scripts_dir, "s", "/opt/stats-ag/scripts", "Location where custom metrics scripts are located")
 	flag.StringVar(&time_prefix, "p", "SYSLOG", "Date prefix format for metric entries (RFC822Z, ISO8601, RFC3339, SYSLOG)")
@@ -33,8 +32,7 @@ func main() {
 
 	if debug == 1 {
 		fmt.Printf(
-			"\nstats-ag config values:\n---------------------------\nenable_scripts = %d\nmetrics_dir = %s\nscripts_dir = %s\ntime_prefix = %s\ndebug = %d\n\n",
-			enable_scripts,
+			"\nstats-ag config values:\n---------------------------\nmetrics_dir = %s\nscripts_dir = %s\ntime_prefix = %s\ndebug = %d\n\n",
 			metrics_dir,
 			scripts_dir,
 			time_prefix,
@@ -54,7 +52,15 @@ func main() {
 		"net":    GetNetStats,
 	}
 
-	wg.Add(len(core_stats) + len(scripts))
+	wg.Add(len(core_stats))
+
+	_, dir_exists_err := os.Stat(scripts_dir)
+	if dir_exists_err == nil {
+		enable_scripts = 1
+		wg.Add(len(scripts))
+	} else {
+		enable_scripts = 0
+	}
 
 	for k, _ := range core_stats {
 		go func(wg *sync.WaitGroup, core_stats map[string]interface{}, method string) {
@@ -68,8 +74,7 @@ func main() {
 		}(&wg, core_stats, k)
 	}
 
-	_, dir_exists_err := os.Stat(scripts_dir)
-	if enable_scripts == 1 && dir_exists_err == nil {
+	if enable_scripts == 1 {
 
 		for _, src := range scripts {
 

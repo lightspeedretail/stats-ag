@@ -23,7 +23,7 @@ func GetMemStats() string {
 }
 
 func GetLoadStats() string {
-	l, err := load.LoadAvg()
+	l, err := load.Avg()
 	format := "last1=%f last5=%f last15=%f"
 	if err == nil {
 		return fmt.Sprintf(format, l.Load1, l.Load5, l.Load15)
@@ -33,7 +33,7 @@ func GetLoadStats() string {
 }
 
 func GetDiskStats() string {
-	d, err := disk.DiskUsage("/")
+	d, err := disk.Usage("/")
 	format := "fstype=%s total=%d free=%d used=%d used_percent=%f inodes_total=%d inodes_used=%d inodes_free=%d inodes_used_percent=%f"
 	if err == nil {
 		return fmt.Sprintf(format,
@@ -44,7 +44,7 @@ func GetDiskStats() string {
 }
 
 func GetCpuStats() string {
-	v, err := cpu.CPUTimes(false)
+	v, err := cpu.Times(false)
 	format := "user=%f system=%f idle=%f nice=%f iowait=%f irq=%f soft_irq=%f steal=%f guest=%f guest_nice=%f stolen=%f"
 	if err == nil {
 		return fmt.Sprintf(format,
@@ -56,7 +56,7 @@ func GetCpuStats() string {
 }
 
 func GetHostStats() string {
-	v, err := host.HostInfo()
+	v, err := host.Info()
 	format := "uptime=%d procs=%d os=%s platform=%s platform_family=%s platform_version=%s virtualization_system=%s virtualization_role=%s"
 	if err == nil {
 		return fmt.Sprintf(format, v.Uptime, v.Procs, v.OS, v.Platform, v.PlatformFamily, v.PlatformVersion, v.VirtualizationSystem, v.VirtualizationRole)
@@ -66,7 +66,7 @@ func GetHostStats() string {
 }
 
 func GetNetStats() string {
-	v, err := net.NetIOCounters(false)
+	v, err := net.IOCounters(false)
 	format := "bytes_sent=%d bytes_recv=%d packets_sent=%d packets_recv=%d err_in=%d err_out=%d drop_in=%d drop_out=%d"
 	if err == nil {
 		return fmt.Sprintf(format, v[0].BytesSent, v[0].BytesRecv, v[0].PacketsSent, v[0].PacketsRecv, v[0].Errin, v[0].Errout, v[0].Dropin, v[0].Dropout)
