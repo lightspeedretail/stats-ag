@@ -1,6 +1,11 @@
 stats_ag CHANGELOG
 ===========================
 
+0.1.3
+-----
+- Added custom `Log` function
+- Updated locaitons where file/directory paths where built in order to eliminate possibility of duplicate trailling slashes
+- Added additional debugging statements to be printed when debug mode enabled.
 
 0.1.2
 -----

@@ -4,11 +4,26 @@ import (
 	"errors"
 	"fmt"
 	"reflect"
+	"strconv"
+	"strings"
 	"time"
 )
 
+const (
+	DEBUG_LVL_NOTICE = iota + 1
+	DEBUG_LVL_VERBOSE
+	DEBUG_LVL_DEBUG
+	DEBUG_ERROR
+)
+
 func metricsFileName(series_name string) string {
-	return metrics_dir + "/" + series_name + ".log"
+	return strings.Join([]string{strings.TrimRight(metrics_dir, "/"), (series_name + ".log")}, "/")
+}
+
+func YmdToString() string {
+	t := time.Now()
+	y, m, d := t.Date()
+	return strconv.Itoa(y) + "-" + fmt.Sprintf("%02d", m) + "-" + fmt.Sprintf("%02d", d)
 }
 
 func getDateStamp(format string) string {
@@ -36,6 +51,29 @@ func getDateStamp(format string) string {
 			t.Hour(), t.Minute(), t.Second())
 	}
 	return t.Format(time.RFC822Z)
+}
+
+func DateStampAsString(with_milliseconds bool) string {
+	t := time.Now()
+	dt := YmdToString() + " " + fmt.Sprintf("%02d", t.Hour()) + ":" + fmt.Sprintf("%02d", t.Minute()) + ":" + fmt.Sprintf("%02d", t.Second())
+	if with_milliseconds {
+		dt = dt + "." + fmt.Sprintf("%03d", t.Nanosecond()/1000000)
+	}
+	return dt
+}
+
+func Log(lvl int, str string) {
+
+	switch lvl {
+	case 1:
+		fmt.Printf("[%s] NOTICE: %s\n", DateStampAsString(true), str)
+	case 2:
+		fmt.Printf("[%s] DEBUG: %s\n", DateStampAsString(true), str)
+	case 3:
+		fmt.Printf("[%s] VERBOSE: %s\n", DateStampAsString(true), str)
+	case 4:
+		fmt.Printf("[%s] ERROR: %s\n", DateStampAsString(true), str)
+	}
 }
 
 func Call(m map[string]interface{}, name string, params ...interface{}) (result []reflect.Value, err error) {
