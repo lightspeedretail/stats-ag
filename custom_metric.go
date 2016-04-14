@@ -16,8 +16,8 @@ type CustomMetric struct {
 
 func NewCustomMetric(script_path string) (*CustomMetric, error) {
 
-	if debug == 1 {
-		fmt.Println(getDateStamp(time_prefix), "[DEBUG] custom metric file:", script_path)
+	if debug {
+		Log(DEBUG_LVL_NOTICE, fmt.Sprintf("Custom metric file: %s", script_path))
 	}
 
 	if _, err := os.Stat(script_path); os.IsNotExist(err) {

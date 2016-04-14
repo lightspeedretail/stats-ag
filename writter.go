@@ -33,14 +33,16 @@ func (mw *MetricsWriter) Save(data string) int {
 	if err != nil {
 		fh, err = os.Create(metricsFileName(mw.GroupName))
 		if err != nil {
-			fmt.Printf("%s [ERROR] Error creating file %s: %s\n", getDateStamp(mw.timePrefix), metricsFileName(mw.GroupName), err)
+			Log(DEBUG_ERROR, fmt.Sprintf("Error creating file %s: %s", metricsFileName(mw.GroupName), err))
 		}
 	}
 	defer fh.Close()
 
 	nb, err := fh.WriteString(getDateStamp(mw.timePrefix) + " " + data + "\n")
 	if err != nil {
-		fmt.Printf("%s [ERROR] Error writting to %s: %s\n", getDateStamp(mw.timePrefix), metricsFileName(mw.GroupName), err)
+		Log(DEBUG_ERROR, fmt.Sprintf("Error writting to %s: %s", metricsFileName(mw.GroupName), err))
+	} else if debug {
+		Log(DEBUG_LVL_NOTICE, fmt.Sprintf("Wrote %d bytes to %s", nb, metricsFileName(mw.GroupName)))
 	}
 
 	mw.fileLock.Unlock()

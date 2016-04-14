@@ -3,3 +3,5 @@ _scripts/*
 .vagrant/*
 bin/*
 Vagrantfile
+ls-stats-ag
+stats-ag
